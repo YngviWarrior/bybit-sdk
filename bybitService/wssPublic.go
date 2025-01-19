@@ -1,16 +1,17 @@
-package service
+package bybitService
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"time"
 
-	bybitstructs "github.com/YngviWarrior/BybitSDK/bybitstructs"
+	bybitstructs "github.com/YngviWarrior/BybitSDK/byBitStructs"
 	"github.com/gorilla/websocket"
 )
 
-func (s *bybit) LivePublicV5(topic string, stopChan <-chan struct{}) {
+func (s *bybit) LivePublic(topic string, stopChan <-chan struct{}) {
 	s.setUrl()
 
 	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/public/spot", nil)
@@ -44,6 +45,9 @@ func (s *bybit) LivePublicV5(topic string, stopChan <-chan struct{}) {
 					log.Panic("LPV5 02 ", err)
 				}
 
+				if err := s.Conn.Set(context.Background(), responseKline.Topic, data, 0).Err(); err != nil {
+					log.Panic("LPV5 03 ", err)
+				}
 			}
 
 			Subscribed = true
@@ -51,7 +55,7 @@ func (s *bybit) LivePublicV5(topic string, stopChan <-chan struct{}) {
 		}
 	}()
 
-	fmt.Println("Conectado ao WebSocket:", byBitBaseWebSocket+"/v5/public/spot")
+	fmt.Println("Conectado ao WebSocket:", BASE_URL_WSS+"/v5/public/spot")
 	subscription := fmt.Sprintf(`{"op":"subscribe","args":["%s"]}`, topic)
 
 	// Enviar uma mensagem para o servidor WebSocket

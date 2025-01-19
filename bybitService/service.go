@@ -1,10 +1,11 @@
-package service
+package bybitService
 
 import (
 	"context"
 	"log"
 	"os"
 
+	bybitstructs "github.com/YngviWarrior/BybitSDK/byBitStructs"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -14,7 +15,11 @@ var BASE_URL_WSS = "wss://stream.bybit.com"
 const recvWindow = "10000"
 
 type BybitServiceInterface interface {
-	LivePublicV5(topic string, stopChan <-chan struct{})
+	LivePublic(topic string, stopChan <-chan struct{})
+
+	GetServerTimestamp() (response int64)
+	GetWalletInfo() (response *bybitstructs.GetWalletInfoResponse)
+	CreateOrder(params *bybitstructs.OrderParams) (response *bybitstructs.OrderResponse)
 }
 
 type bybit struct {
@@ -48,6 +53,6 @@ func NewBybitService(publicKey, secretKey string) BybitServiceInterface {
 	log.Println("Conexão com Redis bem-sucedida!")
 
 	return &bybit{
-		Conn: nil,
+		Conn: rdb,
 	}
 }
