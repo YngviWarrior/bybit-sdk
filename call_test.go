@@ -15,7 +15,7 @@ import (
 var bybit service.BybitServiceInterface
 
 func TestMain(m *testing.M) {
-	err := godotenv.Load(`../.env`)
+	err := godotenv.Load(`.env`)
 
 	if err != nil {
 		log.Fatal(".env file is missing")
