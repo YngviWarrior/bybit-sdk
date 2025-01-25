@@ -16,7 +16,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *bybit) LiveOrdersV5(stopChan <-chan struct{}) {
+func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 	s.setUrl()
 	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/private", nil)
 	if err != nil {
@@ -61,8 +61,16 @@ func (s *bybit) LiveOrdersV5(stopChan <-chan struct{}) {
 					log.Panic("LOV5 03")
 				}
 
-				if err := s.Conn.Set(context.Background(), responseData.Topic, responseData.Data, 0); err != nil {
-					log.Panic("LOV5 04: ", err)
+				if responseData.RetCode == 0 {
+					data, err := json.Marshal(responseData.Data)
+					if err != nil {
+						log.Panic("LOV5 03.1 ", err)
+					}
+					if err := s.Conn.Set(context.Background(), responseData.Topic, data, 0).Err(); err != nil {
+						log.Panic("LOV5 04: ", err)
+					}
+				} else {
+					log.Panic("LOV5 05: ", err)
 				}
 			}
 

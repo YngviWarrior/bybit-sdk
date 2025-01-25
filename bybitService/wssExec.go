@@ -16,7 +16,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *bybit) LiveExecV5(createOrderChan <-chan *bybitstructs.CreateTradeParams, cancelOrderChan <-chan *bybitstructs.CancelTradeParams, stopChan <-chan struct{}) {
+func (s *bybit) LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams, cancelOrderChan <-chan *bybitstructs.CancelTradeParams, stopChan <-chan struct{}) {
 	s.setUrl()
 	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/trade", nil)
 	if err != nil {
@@ -57,15 +57,23 @@ func (s *bybit) LiveExecV5(createOrderChan <-chan *bybitstructs.CreateTradeParam
 				return
 			}
 
+			// fmt.Printf("Mensagem recebida LEV5: %v\n", string(msg))
 			if Authenticated {
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {
 					log.Println("Erro ao fazer unmarshal da mensagem:", err)
 				}
-				fmt.Printf("Mensagem recebida LEV5: %v\n", string(msg))
 
-				if err := s.Conn.Set(context.Background(), responseData.Op, responseData.Data, 0); err != nil {
-					log.Panic("LOV5 04: ", err)
+				if responseData.RetCode == 0 {
+					data, err := json.Marshal(responseData.Data)
+					if err != nil {
+						log.Panic("LEV5 01 ", err)
+					}
+					if err := s.Conn.Set(context.Background(), responseData.Op, data, 0).Err(); err != nil {
+						log.Panic("LEV5 04: ", err)
+					}
+				} else {
+					log.Panic("LEV5 05: ", err)
 				}
 			}
 
@@ -79,14 +87,13 @@ func (s *bybit) LiveExecV5(createOrderChan <-chan *bybitstructs.CreateTradeParam
 		log.Println("Failed to marshal auth message:", err)
 		return
 	}
-	fmt.Println("message", string(message))
-	// Enviar uma mensagem para o servidor WebSocket
+	fmt.Println("auth msg: ", string(message))
+
 	err = conn.WriteMessage(websocket.TextMessage, message)
 	if err != nil {
 		log.Fatal("Erro ao enviar mensagem:", err)
 	}
 
-	// Enviar um heart beat (ping) a cada 20 segundos (opcional)
 	ticker := time.NewTicker(20 * time.Second)
 	defer ticker.Stop()
 
@@ -132,13 +139,12 @@ func (s *bybit) LiveExecV5(createOrderChan <-chan *bybitstructs.CreateTradeParam
 
 		case <-stopChan:
 			fmt.Println("Encerrando conexão...")
-			// Envia uma mensagem de encerramento antes de fechar
 			err := conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Encerrando conexão"))
 			if err != nil {
 				log.Println("Erro ao enviar mensagem de encerramento:", err)
 				return
 			}
-			// Dá tempo para o servidor processar a mensagem de fechamento
+
 			time.Sleep(1 * time.Second)
 			return
 		}
