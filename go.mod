@@ -1,4 +1,4 @@
-module github.com/YngviWarrior/BybitSDK
+module github.com/YngviWarrior/bybit-sdk
 
 go 1.23.4
 
