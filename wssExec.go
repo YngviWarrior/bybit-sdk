@@ -1,4 +1,4 @@
-package bybitService
+package bybitSDK
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package bybitService_test
+package bybitSDK_test
 
 import (
 	"log"
@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
+	service "github.com/YngviWarrior/BybitSDK"
 	bybitstructs "github.com/YngviWarrior/BybitSDK/byBitStructs"
-	service "github.com/YngviWarrior/BybitSDK/bybitService"
 	"github.com/joho/godotenv"
 )
 
