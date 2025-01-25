@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	bybitstructs "github.com/YngviWarrior/BybitSDK/byBitStructs"
+	bybitstructs "github.com/YngviWarrior/bybit-sdk/byBitStructs"
 	"github.com/redis/go-redis/v9"
 )
 

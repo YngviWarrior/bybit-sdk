@@ -12,7 +12,7 @@ import (
 	"os"
 	"time"
 
-	bybitstructs "github.com/YngviWarrior/BybitSDK/byBitStructs"
+	bybitstructs "github.com/YngviWarrior/bybit-sdk/byBitStructs"
 	"github.com/gorilla/websocket"
 )
 

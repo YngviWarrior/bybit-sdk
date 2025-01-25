@@ -13,7 +13,7 @@ import (
 	"os"
 	"strconv"
 
-	bybitstructs "github.com/YngviWarrior/BybitSDK/byBitStructs"
+	bybitstructs "github.com/YngviWarrior/bybit-sdk/byBitStructs"
 )
 
 func (s *bybit) setHeaders(req *http.Request, signature string, timestamp int64) {

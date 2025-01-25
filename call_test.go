@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	service "github.com/YngviWarrior/BybitSDK"
-	bybitstructs "github.com/YngviWarrior/BybitSDK/byBitStructs"
+	service "github.com/YngviWarrior/bybit-sdk"
+	bybitstructs "github.com/YngviWarrior/bybit-sdk/byBitStructs"
 	"github.com/joho/godotenv"
 )
 
