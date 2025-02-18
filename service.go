@@ -15,7 +15,7 @@ var BASE_URL_WSS = "wss://stream.bybit.com"
 const recvWindow = "10000"
 
 type BybitServiceInterface interface {
-	LivePublic(topic string, stopChan <-chan struct{})
+	LivePublic(topic []string, stopChan <-chan struct{})
 	LiveOrders(stopChan <-chan struct{})
 	LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams, cancelOrderChan <-chan *bybitstructs.CancelTradeParams, stopChan <-chan struct{})
 

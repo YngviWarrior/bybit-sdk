@@ -29,9 +29,9 @@ func TestMain(m *testing.M) {
 
 func TestLivePublic(t *testing.T) {
 	stopChan := make(chan struct{})
-	go bybit.LivePublic("kline.1.BTCUSDT", stopChan)
+	go bybit.LivePublic([]string{"kline.1.BTCUSDT", "kline.1.ETHUSDT"}, stopChan)
 
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 20)
 	stopChan <- struct{}{}
 }
 

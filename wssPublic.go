@@ -11,8 +11,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *bybit) LivePublic(topic string, stopChan <-chan struct{}) {
+func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 	s.setUrl()
+	var topics string
+	for _, v := range topic {
+		fmt.Println(v)
+		topics += fmt.Sprintf(`"%s",`, v)
+	}
+	topics = topics[:len(topics)-1]
+	fmt.Println(topics)
 
 	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/public/spot", nil)
 	if err != nil {
@@ -34,12 +41,12 @@ func (s *bybit) LivePublic(topic string, stopChan <-chan struct{}) {
 			if err = json.Unmarshal(msg, &responseSubscription); err != nil {
 				log.Panic("LPV5 00")
 			}
-
+			fmt.Println(responseSubscription)
 			if Subscribed {
 				if err = json.Unmarshal(msg, &responseKline); err != nil {
 					log.Panic("LPV5 01")
 				}
-
+				fmt.Println(responseKline)
 				data, err := json.Marshal(responseKline.Data)
 				if err != nil {
 					log.Panic("LPV5 02 ", err)
@@ -56,8 +63,8 @@ func (s *bybit) LivePublic(topic string, stopChan <-chan struct{}) {
 	}()
 
 	fmt.Println("Conectado ao WebSocket:", BASE_URL_WSS+"/v5/public/spot")
-	subscription := fmt.Sprintf(`{"op":"subscribe","args":["%s"]}`, topic)
-
+	subscription := fmt.Sprintf(`{"op":"subscribe","args":[%s]}`, topics)
+	fmt.Println(subscription)
 	// Enviar uma mensagem para o servidor WebSocket
 	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))
 	if err != nil {
