@@ -40,7 +40,7 @@ func (s *bybit) LivePublic(topic string, stopChan <-chan struct{}) {
 					log.Panic("LPV5 01")
 				}
 
-				data, err := json.Marshal(responseKline.Data[0])
+				data, err := json.Marshal(responseKline.Data)
 				if err != nil {
 					log.Panic("LPV5 02 ", err)
 				}
