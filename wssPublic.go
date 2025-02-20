@@ -1,13 +1,13 @@
 package bybitSDK
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"time"
 
 	bybitstructs "github.com/YngviWarrior/bybit-sdk/byBitStructs"
+	"github.com/YngviWarrior/bybit-sdk/infra/rabbitmq"
 	"github.com/gorilla/websocket"
 )
 
@@ -43,6 +43,8 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 			}
 			fmt.Println(responseSubscription)
 			if Subscribed {
+				mqConn := rabbitmq.NewRabbitMQConnection()
+
 				if err = json.Unmarshal(msg, &responseKline); err != nil {
 					log.Panic("LPV5 01")
 				}
@@ -52,9 +54,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 					log.Panic("LPV5 02 ", err)
 				}
 
-				if err := s.Conn.Set(context.Background(), responseKline.Topic, data, 0).Err(); err != nil {
-					log.Panic("LPV5 03 ", err)
-				}
+				mqConn.Publish(responseKline.Topic, data)
 			}
 
 			Subscribed = true

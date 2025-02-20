@@ -1,12 +1,10 @@
 package bybitSDK
 
 import (
-	"context"
-	"log"
 	"os"
 
 	bybitstructs "github.com/YngviWarrior/bybit-sdk/byBitStructs"
-	"github.com/redis/go-redis/v9"
+	"github.com/YngviWarrior/bybit-sdk/infra/rabbitmq"
 )
 
 var BASE_URL = "https://api.bybit.com"
@@ -28,7 +26,7 @@ type BybitServiceInterface interface {
 }
 
 type bybit struct {
-	Conn *redis.Client
+	Conn rabbitmq.RabbitMQInterface
 }
 
 func (s *bybit) setUrl() {
@@ -43,21 +41,9 @@ func (s *bybit) setUrl() {
 }
 
 func NewBybitService(publicKey, secretKey string) BybitServiceInterface {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // Endereço do servidor Redis
-		Password: "",               // Senha (se houver)
-		DB:       0,                // Número do banco de dados
-	})
-
-	ctx := context.Background()
-	_, err := rdb.Ping(ctx).Result()
-	if err != nil {
-		log.Fatalf("Erro ao conectar ao Redis: %v", err)
-	}
-
-	log.Println("Conexão com Redis bem-sucedida!")
+	messagebroker := rabbitmq.NewRabbitMQConnection()
 
 	return &bybit{
-		Conn: rdb,
+		Conn: messagebroker,
 	}
 }

@@ -1,7 +1,6 @@
 package bybitSDK
 
 import (
-	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -13,6 +12,7 @@ import (
 	"time"
 
 	bybitstructs "github.com/YngviWarrior/bybit-sdk/byBitStructs"
+	"github.com/YngviWarrior/bybit-sdk/infra/rabbitmq"
 	"github.com/gorilla/websocket"
 )
 
@@ -57,6 +57,7 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 			}
 
 			if Authenticated {
+				mqConn := rabbitmq.NewRabbitMQConnection()
 				if err = json.Unmarshal(msg, &responseData); err != nil {
 					log.Panic("LOV5 03")
 				}
@@ -66,9 +67,8 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 					if err != nil {
 						log.Panic("LOV5 03.1 ", err)
 					}
-					if err := s.Conn.Set(context.Background(), responseData.Topic, data, 0).Err(); err != nil {
-						log.Panic("LOV5 04: ", err)
-					}
+
+					mqConn.Publish(responseData.Topic, data)
 				} else {
 					log.Panic("LOV5 05: ", err)
 				}

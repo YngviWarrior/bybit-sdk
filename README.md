@@ -1,4 +1,7 @@
 # BybitSDK
 
 - Dependencies:
-Redis Docker: docker run --name redis -d -p 6379:6379 redis
+docker run -d --name rabbitmq \
+  -p 5672:5672 \
+  -p 15672:15672 \
+  rabbitmq:management

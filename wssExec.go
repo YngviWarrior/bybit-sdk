@@ -1,7 +1,6 @@
 package bybitSDK
 
 import (
-	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -13,6 +12,7 @@ import (
 	"time"
 
 	bybitstructs "github.com/YngviWarrior/bybit-sdk/byBitStructs"
+	"github.com/YngviWarrior/bybit-sdk/infra/rabbitmq"
 	"github.com/gorilla/websocket"
 )
 
@@ -59,6 +59,7 @@ func (s *bybit) LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams,
 
 			// fmt.Printf("Mensagem recebida LEV5: %v\n", string(msg))
 			if Authenticated {
+				mqConn := rabbitmq.NewRabbitMQConnection()
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {
 					log.Println("Erro ao fazer unmarshal da mensagem:", err)
@@ -69,9 +70,8 @@ func (s *bybit) LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams,
 					if err != nil {
 						log.Panic("LEV5 01 ", err)
 					}
-					if err := s.Conn.Set(context.Background(), responseData.Op, data, 0).Err(); err != nil {
-						log.Panic("LEV5 04: ", err)
-					}
+
+					mqConn.Publish(responseData.Op, data)
 				} else {
 					log.Panic("LEV5 05: ", err)
 				}
