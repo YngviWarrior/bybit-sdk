@@ -3,11 +3,11 @@ package rabbitmq
 import (
 	"log"
 
-	"github.com/streadway/amqp"
+	amqp091 "github.com/rabbitmq/amqp091-go"
 )
 
 type rabbitmq struct {
-	Conn *amqp.Connection
+	Conn *amqp091.Connection
 }
 
 type RabbitMQInterface interface {
@@ -15,7 +15,7 @@ type RabbitMQInterface interface {
 }
 
 func NewRabbitMQConnection() RabbitMQInterface {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp091.Dial("amqp://guest:guest@localhost:5672/")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -3,7 +3,7 @@ package rabbitmq
 import (
 	"log"
 
-	"github.com/streadway/amqp"
+	amqp091 "github.com/rabbitmq/amqp091-go"
 )
 
 func (r *rabbitmq) Publish(queueName string, data []byte) {
@@ -32,7 +32,7 @@ func (r *rabbitmq) Publish(queueName string, data []byte) {
 		queue.Name,
 		false,
 		false,
-		amqp.Publishing{
+		amqp091.Publishing{
 			ContentType: "text/plain",
 			Body:        data,
 		},
