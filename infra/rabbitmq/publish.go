@@ -14,22 +14,25 @@ func (r *rabbitmq) Publish(queueName string, data []byte) {
 
 	defer ch.Close()
 
-	queue, err := ch.QueueDeclare(
-		queueName,
-		false, // Durable: false (não persiste após reiniciar o RabbitMQ)
-		false, // Auto Delete: false (não apaga quando ninguém estiver consumindo)
-		false, // Exclusive: false (pode ser acessada por múltiplos consumidores)
-		false, // No Wait: false
-		nil,   // Arguments
+	err = ch.ExchangeDeclare(
+		"klines", // Nome do Exchange
+		"fanout", // Tipo Fanout
+		false,    // Não persistente
+		false,    // Não autodelete
+		false,
+		false,
+		nil,
 	)
 
 	if err != nil {
 		log.Fatal("RP 00: ", err)
 	}
 
+	defer ch.Close()
+
 	err = ch.Publish(
+		"klines",
 		"",
-		queue.Name,
 		false,
 		false,
 		amqp091.Publishing{
