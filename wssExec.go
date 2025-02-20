@@ -18,6 +18,8 @@ import (
 
 func (s *bybit) LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams, cancelOrderChan <-chan *bybitstructs.CancelTradeParams, stopChan <-chan struct{}) {
 	s.setUrl()
+	mqConn := rabbitmq.NewRabbitMQConnection()
+
 	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/trade", nil)
 	if err != nil {
 		log.Fatal("Erro ao conectar ao WebSocket:", err)
@@ -59,7 +61,6 @@ func (s *bybit) LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams,
 
 			// fmt.Printf("Mensagem recebida LEV5: %v\n", string(msg))
 			if Authenticated {
-				mqConn := rabbitmq.NewRabbitMQConnection()
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {
 					log.Println("Erro ao fazer unmarshal da mensagem:", err)

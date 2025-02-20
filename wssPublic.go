@@ -13,13 +13,14 @@ import (
 
 func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 	s.setUrl()
+	mqConn := rabbitmq.NewRabbitMQConnection()
+
 	var topics string
 	for _, v := range topic {
 		fmt.Println(v)
 		topics += fmt.Sprintf(`"%s",`, v)
 	}
 	topics = topics[:len(topics)-1]
-	fmt.Println(topics)
 
 	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/public/spot", nil)
 	if err != nil {
@@ -41,9 +42,9 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 			if err = json.Unmarshal(msg, &responseSubscription); err != nil {
 				log.Panic("LPV5 00")
 			}
+
 			fmt.Println(responseSubscription)
 			if Subscribed {
-				mqConn := rabbitmq.NewRabbitMQConnection()
 
 				if err = json.Unmarshal(msg, &responseKline); err != nil {
 					log.Panic("LPV5 01")

@@ -18,6 +18,8 @@ import (
 
 func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 	s.setUrl()
+	mqConn := rabbitmq.NewRabbitMQConnection()
+
 	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/private", nil)
 	if err != nil {
 		log.Fatal("Erro ao conectar ao WebSocket:", err)
@@ -57,7 +59,6 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 			}
 
 			if Authenticated {
-				mqConn := rabbitmq.NewRabbitMQConnection()
 				if err = json.Unmarshal(msg, &responseData); err != nil {
 					log.Panic("LOV5 03")
 				}
