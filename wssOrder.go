@@ -69,7 +69,7 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 						log.Panic("LOV5 03.1 ", err)
 					}
 
-					mqConn.Publish(responseData.Topic, data)
+					mqConn.Publish("", responseData.Topic, data)
 				} else {
 					log.Panic("LOV5 05: ", err)
 				}

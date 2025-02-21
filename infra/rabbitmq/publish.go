@@ -6,7 +6,7 @@ import (
 	amqp091 "github.com/rabbitmq/amqp091-go"
 )
 
-func (r *rabbitmq) Publish(queueName string, data []byte) {
+func (r *rabbitmq) Publish(exchangeName string, exchangeType string, data []byte) {
 	ch, err := r.Conn.Channel()
 	if err != nil {
 		log.Fatal(err)
@@ -14,24 +14,36 @@ func (r *rabbitmq) Publish(queueName string, data []byte) {
 
 	defer ch.Close()
 
-	err = ch.ExchangeDeclare(
-		"klines", // Nome do Exchange
-		"fanout", // Tipo Fanout
-		false,    // Não persistente
-		false,    // Não autodelete
-		false,
-		false,
-		nil,
+	if exchangeName != "" {
+		err = ch.ExchangeDeclare(
+			exchangeName, // Nome do Exchange
+			exchangeType, // Tipo Fanout
+			false,        // Não persistente
+			false,        // Não autodelete
+			false,
+			false,
+			nil,
+		)
+		if err != nil {
+			log.Fatal("Erro ao declarar exchange:", err)
+		}
+	}
+
+	_, err = ch.QueueDeclare(
+		exchangeName,
+		false, // Durable: false (não persiste após reiniciar o RabbitMQ)
+		false, // Auto Delete: false (não apaga quando ninguém estiver consumindo)
+		false, // Exclusive: false (pode ser acessada por múltiplos consumidores)
+		false, // No Wait: false
+		nil,   // Arguments
 	)
 
 	if err != nil {
 		log.Fatal("RP 00: ", err)
 	}
 
-	defer ch.Close()
-
 	err = ch.Publish(
-		"klines",
+		exchangeName,
 		"",
 		false,
 		false,

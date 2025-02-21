@@ -45,7 +45,6 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 
 			// fmt.Println(responseSubscription)
 			if Subscribed {
-
 				if err = json.Unmarshal(msg, &responseKline); err != nil {
 					log.Panic("LPV5 01")
 				}
@@ -55,7 +54,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 					log.Panic("LPV5 02 ", err)
 				}
 
-				mqConn.Publish(responseKline.Topic, data)
+				mqConn.Publish("klines", responseKline.Topic, data)
 			}
 
 			Subscribed = true
