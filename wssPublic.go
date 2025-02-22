@@ -54,7 +54,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 					log.Panic("LPV5 02 ", err)
 				}
 
-				mqConn.Publish("klines", responseKline.Topic, data)
+				mqConn.Publish("klines", "fanout", responseKline.Topic, data)
 			}
 
 			Subscribed = true

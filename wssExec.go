@@ -72,7 +72,7 @@ func (s *bybit) LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams,
 						log.Panic("LEV5 01 ", err)
 					}
 
-					mqConn.Publish("", responseData.Op, data)
+					mqConn.Publish("", "", responseData.Op, data)
 				} else {
 					log.Panic("LEV5 05: ", err)
 				}

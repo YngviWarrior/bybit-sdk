@@ -12,7 +12,7 @@ type rabbitmq struct {
 }
 
 type RabbitMQInterface interface {
-	Publish(exchangeName string, queueName string, data []byte)
+	Publish(exchangeName string, exchangeType string, queueName string, data []byte)
 }
 
 func NewRabbitMQConnection() RabbitMQInterface {

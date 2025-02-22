@@ -6,7 +6,7 @@ import (
 	amqp091 "github.com/rabbitmq/amqp091-go"
 )
 
-func (r *rabbitmq) Publish(exchangeName string, exchangeType string, data []byte) {
+func (r *rabbitmq) Publish(exchangeName string, exchangeType string, queueName string, data []byte) {
 	ch, err := r.Conn.Channel()
 	if err != nil {
 		log.Fatal(err)
@@ -30,7 +30,7 @@ func (r *rabbitmq) Publish(exchangeName string, exchangeType string, data []byte
 	}
 
 	_, err = ch.QueueDeclare(
-		exchangeName,
+		queueName,
 		false, // Durable: false (não persiste após reiniciar o RabbitMQ)
 		false, // Auto Delete: false (não apaga quando ninguém estiver consumindo)
 		false, // Exclusive: false (pode ser acessada por múltiplos consumidores)
