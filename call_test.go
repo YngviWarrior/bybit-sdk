@@ -1,6 +1,7 @@
 package bybitSDK_test
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -25,6 +26,15 @@ func TestMain(m *testing.M) {
 
 	code := m.Run()
 	os.Exit(code)
+}
+
+func TestGetKlines(t *testing.T) {
+	response := bybit.GetKlines(&bybitstructs.GetKlinesParams{
+		Symbol:   "BTCUSDT",
+		Interval: "1",
+	})
+
+	fmt.Println(response)
 }
 
 func TestLivePublic(t *testing.T) {

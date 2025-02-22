@@ -23,6 +23,7 @@ type BybitServiceInterface interface {
 	OrderHistory(params *bybitstructs.OrderHistoryParams) (response bybitstructs.OrderHistoryResponse)
 	OpenOrders(params *bybitstructs.OpenOrderParams) (response bybitstructs.OpenOrderResponse)
 	CancelOrders(params *bybitstructs.CancelOrderParams) (response bybitstructs.CancelOrderResponse)
+	GetKlines(params *bybitstructs.GetKlinesParams) (response bybitstructs.GetKlinesResponse)
 }
 
 type bybit struct {

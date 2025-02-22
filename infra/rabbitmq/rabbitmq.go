@@ -2,6 +2,7 @@ package rabbitmq
 
 import (
 	"log"
+	"os"
 
 	amqp091 "github.com/rabbitmq/amqp091-go"
 )
@@ -15,7 +16,7 @@ type RabbitMQInterface interface {
 }
 
 func NewRabbitMQConnection() RabbitMQInterface {
-	conn, err := amqp091.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp091.Dial(os.Getenv("RABBIT_MQ"))
 	if err != nil {
 		log.Fatal(err)
 	}
