@@ -21,8 +21,6 @@ func NewRabbitMQConnection() RabbitMQInterface {
 		log.Fatal(err)
 	}
 
-	log.Println("Conexão com RabbitMQ bem-sucedida!")
-
 	return &rabbitmq{
 		Conn: conn,
 	}

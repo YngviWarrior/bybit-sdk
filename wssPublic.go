@@ -17,7 +17,6 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 
 	var topics string
 	for _, v := range topic {
-		fmt.Println(v)
 		topics += fmt.Sprintf(`"%s",`, v)
 	}
 	topics = topics[:len(topics)-1]
