@@ -33,7 +33,19 @@ func TestGetKlines(t *testing.T) {
 		Symbol:   "BTCUSDT",
 		Interval: "1",
 	})
+	fmt.Println(response)
+}
 
+func TestCreateOrder(t *testing.T) {
+	response := bybit.CreateOrder(&bybitstructs.OrderParams{
+		Category:    "spot",
+		Symbol:      "BTCUSDT",
+		OrderQty:    "0.2",
+		Side:        "Buy",
+		OrderType:   "Market",
+		TimeInForce: "GTC",
+		OrderPrice:  "100.000",
+	})
 	fmt.Println(response)
 }
 

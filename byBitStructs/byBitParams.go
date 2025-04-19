@@ -35,8 +35,8 @@ type OrderParams struct {
 	OrderLinkId   string `json:"orderLinkId"`
 	Symbol        string `json:"symbol"`
 	CreateTime    string `json:"createTime"`
-	OrderPrice    string `json:"orderPrice"`
-	OrderQty      string `json:"orderQty"`
+	OrderPrice    string `json:"price"`
+	OrderQty      string `json:"qty"`
 	OrderType     string `json:"orderType"`
 	Side          string `json:"side"`
 	Status        string `json:"status"`

@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 
 	bybitstructs "github.com/YngviWarrior/bybit-sdk/byBitStructs"
 )
@@ -286,7 +287,13 @@ func (s *bybit) OrderHistory(params *bybitstructs.OrderHistoryParams) (response 
 func (s *bybit) CreateOrder(params *bybitstructs.OrderParams) (response *bybitstructs.OrderResponse) {
 	s.setUrl()
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", BASE_URL+"/v5/order/create", nil)
+
+	body, err := json.Marshal(params)
+	if err != nil {
+		log.Println("BBC 00: ", err.Error())
+	}
+
+	req, err := http.NewRequest("POST", BASE_URL+"/v5/order/create", strings.NewReader(string(body)))
 
 	if err != nil {
 		log.Println("BBC 01: ", err.Error())
@@ -295,22 +302,10 @@ func (s *bybit) CreateOrder(params *bybitstructs.OrderParams) (response *bybitst
 
 	timeResp := s.GetServerTimestamp()
 
-	q := req.URL.Query()
+	fmt.Println(s.gerSign(timeResp, string(body)))
 
-	s.gerQueryString(q, map[string]string{
-		"symbol":      params.Symbol,
-		"qty":         params.OrderQty,
-		"side":        params.Side,
-		"type":        params.OrderType,
-		"timeInForce": params.TimeInForce,
-		"price":       params.OrderPrice,
-	})
-
-	req.URL.RawQuery = q.Encode()
-
-	s.gerSign(timeResp, req.URL.RawQuery)
 	sig := hmac.New(sha256.New, []byte(os.Getenv("BYBIT_SECRET_KEY")))
-	sig.Write([]byte(s.gerSign(timeResp, req.URL.RawQuery)))
+	sig.Write([]byte(s.gerSign(timeResp, string(body))))
 
 	s.setHeaders(req, hex.EncodeToString(sig.Sum(nil)), timeResp)
 	resp, err := client.Do(req)
