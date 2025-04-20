@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"testing"
 	"time"
 
@@ -40,11 +39,12 @@ func TestCreateOrder(t *testing.T) {
 	response := bybit.CreateOrder(&bybitstructs.OrderParams{
 		Category:    "spot",
 		Symbol:      "BTCUSDT",
-		OrderQty:    "0.2",
+		OrderQty:    "10",
 		Side:        "Buy",
 		OrderType:   "Market",
 		TimeInForce: "GTC",
-		OrderPrice:  "100.000",
+		// OrderPrice:  "100.000",
+		// OrderLinkId: "test2",
 	})
 	fmt.Println(response)
 }
@@ -57,54 +57,20 @@ func TestLivePublic(t *testing.T) {
 	stopChan <- struct{}{}
 }
 
-func TestLiveExec(t *testing.T) {
-	order := &bybitstructs.CreateTradeParams{
-		// ReqID: "Test-003",
-		Header: struct {
-			XBAPITimestamp  string "json:\"X-BAPI-TIMESTAMP\""
-			XBAPIRecvWindow string "json:\"X-BAPI-RECV-WINDOW\""
-		}{
-			XBAPITimestamp:  strconv.FormatInt(time.Now().Unix()*1000, 10),
-			XBAPIRecvWindow: "10000",
-		},
-		Op: "order.create",
-		Args: []struct {
-			Symbol      string "json:\"symbol\""
-			Side        string "json:\"side\""
-			OrderType   string "json:\"orderType\""
-			Qty         string "json:\"qty\""
-			Category    string "json:\"category\""
-			TimeInForce string "json:\"timeInForce\""
-		}{
-			{
-				Symbol:      "BTCUSDT",
-				Side:        "Buy",
-				OrderType:   "Market",
-				Qty:         "10",
-				Category:    "spot",
-				TimeInForce: "GTC",
-			},
-		},
-	}
-
-	createOrderChan := make(chan *bybitstructs.CreateTradeParams)
-	cancelOrderChan := make(chan *bybitstructs.CancelTradeParams)
-	stopChan := make(chan struct{})
-
-	go bybit.LiveExec(createOrderChan, cancelOrderChan, stopChan)
-	time.Sleep(time.Second * 3)
-
-	createOrderChan <- order
-
-	time.Sleep(time.Second * 5)
-	stopChan <- struct{}{}
-}
-
-func TestLiveOrder(t *testing.T) {
+func TestLiveOrders(t *testing.T) {
 	stopChan := make(chan struct{})
 	go bybit.LiveOrders(stopChan)
 
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 20)
+	stopChan <- struct{}{}
+}
+
+func TestLiveExec(t *testing.T) {
+	stopChan := make(chan struct{})
+
+	go bybit.LiveExec(stopChan)
+	time.Sleep(time.Second * 30)
+
 	stopChan <- struct{}{}
 }
 
@@ -158,7 +124,12 @@ func TestOpenOrders(t *testing.T) {
 }
 
 func TestCancelOrder(t *testing.T) {
-	response := bybit.CancelOrders(&bybitstructs.CancelOrderParams{})
+	response := bybit.CancelOrders(&bybitstructs.CancelOrderParams{
+		Category:    "spot",
+		Symbol:      "BTCUSDT",
+		OrderId:     "1932902878251685376",
+		OrderLinkId: "test",
+	})
 
 	if response.RetCode != 0 {
 		t.Fatal(response.RetMsg)

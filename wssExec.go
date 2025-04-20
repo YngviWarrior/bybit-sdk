@@ -16,7 +16,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *bybit) LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams, cancelOrderChan <-chan *bybitstructs.CancelTradeParams, stopChan <-chan struct{}) {
+func (s *bybit) LiveExec(stopChan <-chan struct{}) {
 	s.setUrl()
 	mqConn := rabbitmq.NewRabbitMQConnection()
 
@@ -110,34 +110,6 @@ func (s *bybit) LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams,
 			if err != nil {
 				log.Fatal("Erro ao enviar ping:", err)
 			}
-		case order := <-createOrderChan:
-			fmt.Println("Enviando ordem...")
-
-			subscriptionMessage, err := json.Marshal(order)
-			if err != nil {
-				log.Println("Erro ao fazer marshal da mensagem:", err)
-				return
-			}
-
-			if err := conn.WriteMessage(websocket.TextMessage, subscriptionMessage); err != nil {
-				log.Println("Erro ao enviar mensagem de ordem:", err)
-				return
-			}
-
-		case order := <-cancelOrderChan:
-			fmt.Println("Cancelando ordem...")
-
-			subscriptionMessage, err := json.Marshal(order)
-			if err != nil {
-				log.Println("Erro ao fazer marshal da mensagem:", err)
-				return
-			}
-
-			if err := conn.WriteMessage(websocket.TextMessage, subscriptionMessage); err != nil {
-				log.Println("Erro ao enviar mensagem de cancelamento:", err)
-				return
-			}
-
 		case <-stopChan:
 			fmt.Println("Encerrando conexão...")
 			err := conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Encerrando conexão"))

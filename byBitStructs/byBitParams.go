@@ -9,6 +9,8 @@ type GetKlinesParams struct {
 }
 
 type CancelOrderParams struct {
+	Category    string `json:"category"`
+	Symbol      string `json:"symbol"`
 	OrderId     string `json:"orderId"`
 	OrderLinkId string `json:"orderLinkId"`
 }

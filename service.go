@@ -15,7 +15,7 @@ const recvWindow = "10000"
 type BybitServiceInterface interface {
 	LivePublic(topic []string, stopChan <-chan struct{})
 	LiveOrders(stopChan <-chan struct{})
-	LiveExec(createOrderChan <-chan *bybitstructs.CreateTradeParams, cancelOrderChan <-chan *bybitstructs.CancelTradeParams, stopChan <-chan struct{})
+	LiveExec(stopChan <-chan struct{})
 
 	GetServerTimestamp() (response int64)
 	GetWalletInfo() (response *bybitstructs.GetWalletInfoResponse)
