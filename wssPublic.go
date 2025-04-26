@@ -52,7 +52,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 				if err != nil {
 					log.Panic("LPV5 02 ", err)
 				}
-				fmt.Println("Mensagem recebida:", string(data))
+
 				mqConn.Publish("klines", "fanout", responseKline.Topic, data)
 			}
 
