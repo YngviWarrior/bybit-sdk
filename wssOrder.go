@@ -62,7 +62,7 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 				if err = json.Unmarshal(msg, &responseData); err != nil {
 					log.Panic("LOV5 03")
 				}
-
+				fmt.Println("data", responseData)
 				if responseData.RetCode == 0 {
 					data, err := json.Marshal(responseData.Data)
 					if err != nil {
@@ -90,6 +90,14 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 	err = conn.WriteMessage(websocket.TextMessage, message)
 	if err != nil {
 		log.Fatal("LOV5 03:", err)
+	}
+
+	subscription := fmt.Sprintf(`{"op":"subscribe","args":[%s]}`, ``)
+	fmt.Println(subscription)
+	// Enviar uma mensagem para o servidor WebSocket
+	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))
+	if err != nil {
+		log.Fatal("Erro ao enviar mensagem:", err)
 	}
 
 	// Enviar um heart beat (ping) a cada 20 segundos (opcional)

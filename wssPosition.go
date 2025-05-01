@@ -16,17 +16,17 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *bybit) LivePosition(createOrderChan <-chan *bybitstructs.CreateTradeParams, cancelOrderChan <-chan *bybitstructs.CancelTradeParams, stopChan <-chan struct{}) {
+func (s *bybit) LivePosition(stopChan <-chan struct{}) {
 	s.setUrl()
 	mqConn := rabbitmq.NewRabbitMQConnection()
 
-	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/trade", nil)
+	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/private", nil)
 	if err != nil {
 		log.Fatal("Erro ao conectar ao WebSocket:", err)
 	}
 	defer conn.Close()
 
-	fmt.Println("Conectado ao WebSocket:", BASE_URL_WSS+"/v5/trade")
+	fmt.Println("Conectado ao WebSocket:", BASE_URL_WSS+"/v5/private")
 
 	expires := time.Now().UnixNano()/1e6 + 10000
 	mac := hmac.New(sha256.New, []byte(os.Getenv("BYBIT_SECRET_KEY")))
@@ -59,7 +59,7 @@ func (s *bybit) LivePosition(createOrderChan <-chan *bybitstructs.CreateTradePar
 				return
 			}
 
-			// fmt.Printf("Mensagem recebida LEV5: %v\n", string(msg))
+			fmt.Printf("Mensagem recebida LEV5: %v\n", string(msg))
 			if Authenticated {
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {
@@ -95,6 +95,14 @@ func (s *bybit) LivePosition(createOrderChan <-chan *bybitstructs.CreateTradePar
 		log.Fatal("Erro ao enviar mensagem:", err)
 	}
 
+	subscription := fmt.Sprintf(`{"op":"subscribe","args":["%s"]}`, `position`)
+	fmt.Println(subscription)
+	// Enviar uma mensagem para o servidor WebSocket
+	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))
+	if err != nil {
+		log.Fatal("Erro ao enviar mensagem:", err)
+	}
+
 	ticker := time.NewTicker(20 * time.Second)
 	defer ticker.Stop()
 
@@ -109,33 +117,6 @@ func (s *bybit) LivePosition(createOrderChan <-chan *bybitstructs.CreateTradePar
 			}`))
 			if err != nil {
 				log.Fatal("Erro ao enviar ping:", err)
-			}
-		case order := <-createOrderChan:
-			fmt.Println("Enviando ordem...")
-
-			subscriptionMessage, err := json.Marshal(order)
-			if err != nil {
-				log.Println("Erro ao fazer marshal da mensagem:", err)
-				return
-			}
-
-			if err := conn.WriteMessage(websocket.TextMessage, subscriptionMessage); err != nil {
-				log.Println("Erro ao enviar mensagem de ordem:", err)
-				return
-			}
-
-		case order := <-cancelOrderChan:
-			fmt.Println("Cancelando ordem...")
-
-			subscriptionMessage, err := json.Marshal(order)
-			if err != nil {
-				log.Println("Erro ao fazer marshal da mensagem:", err)
-				return
-			}
-
-			if err := conn.WriteMessage(websocket.TextMessage, subscriptionMessage); err != nil {
-				log.Println("Erro ao enviar mensagem de cancelamento:", err)
-				return
 			}
 
 		case <-stopChan:

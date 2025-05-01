@@ -60,6 +60,16 @@ func TestLivePublic(t *testing.T) {
 func TestLiveOrders(t *testing.T) {
 	stopChan := make(chan struct{})
 	go bybit.LiveOrders(stopChan)
+	time.Sleep(time.Second * 30)
+
+	bybit.CreateOrder(&bybitstructs.OrderParams{
+		Category:    "spot",
+		Symbol:      "BTCUSDT",
+		OrderQty:    "10",
+		Side:        "Buy",
+		OrderType:   "Market",
+		TimeInForce: "GTC",
+	})
 
 	time.Sleep(time.Second * 20)
 	stopChan <- struct{}{}
@@ -70,6 +80,75 @@ func TestLiveExec(t *testing.T) {
 
 	go bybit.LiveExec(stopChan)
 	time.Sleep(time.Second * 30)
+
+	bybit.CreateOrder(&bybitstructs.OrderParams{
+		Category:    "spot",
+		Symbol:      "BTCUSDT",
+		OrderQty:    "10",
+		Side:        "Buy",
+		OrderType:   "Market",
+		TimeInForce: "GTC",
+	})
+
+	time.Sleep(time.Second * 20)
+
+	stopChan <- struct{}{}
+}
+
+func TestLivePosition(t *testing.T) {
+	stopChan := make(chan struct{})
+
+	go bybit.LivePosition(stopChan)
+	time.Sleep(time.Second * 30)
+
+	bybit.CreateOrder(&bybitstructs.OrderParams{
+		Category:    "spot",
+		Symbol:      "BTCUSDT",
+		OrderQty:    "10",
+		Side:        "Buy",
+		OrderType:   "Market",
+		TimeInForce: "GTC",
+	})
+
+	time.Sleep(time.Second * 20)
+
+	stopChan <- struct{}{}
+}
+
+func TestLiveTrade(t *testing.T) {
+	stopChan := make(chan struct{})
+	orderChan := make(chan *bybitstructs.OrderRequest)
+
+	timestamp := bybit.GetServerTimestamp()
+
+	order := &bybitstructs.OrderRequest{
+		ReqID: "test",
+		Header: bybitstructs.RequestHeader{
+			Timestamp:  fmt.Sprintf("%d", timestamp),
+			RecvWindow: "60000",
+			Referer:    "bot-001",
+		},
+		Op: "order.create",
+		Args: []bybitstructs.OrderArgument{
+			{
+				Symbol:    "BTCUSDT",
+				Side:      "Buy",
+				OrderType: "Market",
+				Qty:       "10",
+				// Price:       "100.000",
+				Category:    "spot",
+				TimeInForce: "GTC",
+			},
+		},
+	}
+
+	go bybit.LiveTrade(orderChan, stopChan)
+
+	time.Sleep(time.Second * 30)
+
+	orderChan <- order
+
+	time.Sleep(time.Second * 20)
 
 	stopChan <- struct{}{}
 }

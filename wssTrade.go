@@ -16,17 +16,17 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *bybit) LiveExec(stopChan <-chan struct{}) {
+func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-chan struct{}) {
 	s.setUrl()
 	mqConn := rabbitmq.NewRabbitMQConnection()
 
-	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/private", nil)
+	conn, _, err := websocket.DefaultDialer.Dial(BASE_URL_WSS+"/v5/trade", nil)
 	if err != nil {
 		log.Fatal("Erro ao conectar ao WebSocket:", err)
 	}
 	defer conn.Close()
 
-	fmt.Println("Conectado ao WebSocket:", BASE_URL_WSS+"/v5/private")
+	fmt.Println("Conectado ao WebSocket:", BASE_URL_WSS+"/v5/trade")
 
 	expires := time.Now().UnixNano()/1e6 + 10000
 	mac := hmac.New(sha256.New, []byte(os.Getenv("BYBIT_SECRET_KEY")))
@@ -44,7 +44,7 @@ func (s *bybit) LiveExec(stopChan <-chan struct{}) {
 	go func(w http.ResponseWriter, r *http.Request) {
 		for {
 			var response bybitstructs.WebSocketAuthResponse
-			var responseData bybitstructs.ExecutionMessage
+			var responseData bybitstructs.LiveExecResponse
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
 				log.Fatal("Erro to read message:", err)
@@ -60,19 +60,20 @@ func (s *bybit) LiveExec(stopChan <-chan struct{}) {
 				return
 			}
 
+			fmt.Printf("Message Received LEV5: %v\n", string(msg))
 			if Subscribed {
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {
 					log.Println("Erro to unmarshal message:", err)
 				}
 
-				if responseData.Topic == "execution" {
+				if responseData.RetCode == 0 {
 					data, err := json.Marshal(responseData.Data)
 					if err != nil {
 						log.Panic("LEV5 01 ", err)
 					}
 
-					mqConn.Publish("", "", responseData.Topic, data)
+					mqConn.Publish("", "", responseData.Op, data)
 				} else {
 					log.Panic("LEV5 05: ", err)
 				}
@@ -101,15 +102,7 @@ func (s *bybit) LiveExec(stopChan <-chan struct{}) {
 
 	err = conn.WriteMessage(websocket.TextMessage, message)
 	if err != nil {
-		log.Fatal("Erro to sent message:", err)
-	}
-
-	subscription := fmt.Sprintf(`{"op":"subscribe","args":["%s"]}`, `execution`)
-	fmt.Println(subscription)
-	// Enviar uma mensagem para o servidor WebSocket
-	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))
-	if err != nil {
-		log.Fatal("Erro to sent message:", err)
+		log.Fatal("Erro to send message:", err)
 	}
 
 	ticker := time.NewTicker(20 * time.Second)
@@ -125,12 +118,24 @@ func (s *bybit) LiveExec(stopChan <-chan struct{}) {
 				"op": "ping"
 			}`))
 			if err != nil {
-				log.Fatal("Erro ao enviar ping:", err)
+				log.Fatal("Erro to send ping:", err)
+			}
+		case orderMessage := <-order:
+			bytes, err := json.Marshal(orderMessage)
+			if err != nil {
+				log.Println("Erro to marshal order message:", err)
+				return
+			}
+			fmt.Println("Order message: ", string(bytes))
+			err = conn.WriteMessage(websocket.TextMessage, bytes)
+			if err != nil {
+				log.Fatal("Erro to send ping:", err)
 			}
 		case <-stopChan:
+			fmt.Println("Encerrando conexão...")
 			err := conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Encerrando conexão"))
 			if err != nil {
-				log.Println("Erro to send close message:", err)
+				log.Println("Erro to send closure message:", err)
 				return
 			}
 

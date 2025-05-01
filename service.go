@@ -16,6 +16,8 @@ type BybitServiceInterface interface {
 	LivePublic(topic []string, stopChan <-chan struct{})
 	LiveOrders(stopChan <-chan struct{})
 	LiveExec(stopChan <-chan struct{})
+	LivePosition(stopChan <-chan struct{})
+	LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-chan struct{})
 
 	GetServerTimestamp() (response int64)
 	GetWalletInfo() (response *bybitstructs.GetWalletInfoResponse)
