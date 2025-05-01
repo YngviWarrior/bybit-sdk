@@ -59,7 +59,7 @@ func (s *bybit) LiveExec(stopChan <-chan struct{}) {
 				log.Println("Erro LEV5 00:", response.RetMsg)
 				return
 			}
-
+			fmt.Println("response: ", string(msg))
 			if Subscribed {
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {
@@ -105,8 +105,7 @@ func (s *bybit) LiveExec(stopChan <-chan struct{}) {
 	}
 
 	subscription := fmt.Sprintf(`{"op":"subscribe","args":["%s"]}`, `execution`)
-	fmt.Println(subscription)
-	// Enviar uma mensagem para o servidor WebSocket
+
 	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))
 	if err != nil {
 		log.Fatal("Erro to sent message:", err)

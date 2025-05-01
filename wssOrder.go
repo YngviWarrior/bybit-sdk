@@ -40,6 +40,7 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 
 	var ConnID string
 	var Authenticated bool
+	var Subscribed bool
 	go func(w http.ResponseWriter, r *http.Request) {
 		for {
 			var response bybitstructs.OldWebSocketAuthResponse
@@ -58,7 +59,8 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 				return
 			}
 
-			if Authenticated {
+			fmt.Println("response", response)
+			if Subscribed {
 				if err = json.Unmarshal(msg, &responseData); err != nil {
 					log.Panic("LOV5 03")
 				}
@@ -73,6 +75,15 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 				} else {
 					log.Panic("LOV5 05: ", err)
 				}
+			}
+
+			if Authenticated {
+				err = json.Unmarshal(msg, &response)
+				if err != nil {
+					log.Println("Subscription Failed", err)
+				}
+
+				Subscribed = true
 			}
 
 			ConnID = response.ConnID

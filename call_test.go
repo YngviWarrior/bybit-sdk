@@ -88,6 +88,7 @@ func TestLiveExec(t *testing.T) {
 		Side:        "Buy",
 		OrderType:   "Market",
 		TimeInForce: "GTC",
+		// OrderLinkId: "test",
 	})
 
 	time.Sleep(time.Second * 20)
@@ -108,6 +109,7 @@ func TestLivePosition(t *testing.T) {
 		Side:        "Buy",
 		OrderType:   "Market",
 		TimeInForce: "GTC",
+		// OrderLinkId: "test",
 	})
 
 	time.Sleep(time.Second * 20)

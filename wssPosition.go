@@ -40,6 +40,7 @@ func (s *bybit) LivePosition(stopChan <-chan struct{}) {
 
 	var ConnID string
 	var Authenticated bool
+	var Subscribed bool
 	go func(w http.ResponseWriter, r *http.Request) {
 		for {
 			var response bybitstructs.WebSocketAuthResponse
@@ -60,7 +61,7 @@ func (s *bybit) LivePosition(stopChan <-chan struct{}) {
 			}
 
 			fmt.Printf("Mensagem recebida LEV5: %v\n", string(msg))
-			if Authenticated {
+			if Subscribed {
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {
 					log.Println("Erro ao fazer unmarshal da mensagem:", err)
@@ -76,6 +77,15 @@ func (s *bybit) LivePosition(stopChan <-chan struct{}) {
 				} else {
 					log.Panic("LEV5 05: ", err)
 				}
+			}
+
+			if Authenticated {
+				err = json.Unmarshal(msg, &response)
+				if err != nil {
+					log.Println("Subscription Failed", err)
+				}
+
+				Subscribed = true
 			}
 
 			ConnID = response.ConnID
