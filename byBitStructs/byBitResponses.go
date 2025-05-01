@@ -211,17 +211,6 @@ type AllCoinsResponse struct {
 	RateLimit        int64  `json:"rate_limit"`
 }
 
-type OrderResponse struct {
-	RetCode int    `json:"retCode"`
-	RetMsg  string `json:"retMsg"`
-	Result  struct {
-		OrderID     string `json:"orderId"`
-		OrderLinkID string `json:"orderLinkId"`
-	} `json:"result"`
-	RetExtInfo map[string]string `json:"retExtInfo"`
-	Time       int64             `json:"time"`
-}
-
 type WebSocketAuthResponse struct {
 	Success bool   `json:"success"`
 	RetMsg  string `json:"ret_msg"`

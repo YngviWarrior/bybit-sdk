@@ -120,7 +120,6 @@ func TestLiveTrade(t *testing.T) {
 	orderChan := make(chan *bybitstructs.OrderRequest)
 
 	timestamp := bybit.GetServerTimestamp()
-
 	order := &bybitstructs.OrderRequest{
 		ReqID: "test",
 		Header: bybitstructs.RequestHeader{
@@ -134,7 +133,7 @@ func TestLiveTrade(t *testing.T) {
 				Symbol:    "BTCUSDT",
 				Side:      "Buy",
 				OrderType: "Market",
-				Qty:       "10",
+				Qty:       "500",
 				// Price:       "100.000",
 				Category:    "spot",
 				TimeInForce: "GTC",
@@ -143,13 +142,11 @@ func TestLiveTrade(t *testing.T) {
 	}
 
 	go bybit.LiveTrade(orderChan, stopChan)
-
 	time.Sleep(time.Second * 30)
 
 	orderChan <- order
 
 	time.Sleep(time.Second * 20)
-
 	stopChan <- struct{}{}
 }
 
@@ -179,6 +176,7 @@ func TestOrderHistory(t *testing.T) {
 	response := bybit.OrderHistory(&bybitstructs.OrderHistoryParams{
 		Category: "spot",
 		Symbol:   "BTCUSDT",
+		OrderId:  "1940583093161530880",
 	})
 
 	if response.RetCode != 0 {
@@ -188,7 +186,7 @@ func TestOrderHistory(t *testing.T) {
 	if len(response.Result.List) == 0 {
 		t.Fatalf("Order history list is empty")
 	}
-
+	fmt.Println(response)
 }
 
 func TestOpenOrders(t *testing.T) {

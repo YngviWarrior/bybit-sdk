@@ -324,7 +324,7 @@ func (s *bybit) CreateOrder(params *bybitstructs.OrderParams) (response *bybitst
 		log.Println("BBC 04: ", err.Error())
 		return
 	}
-	fmt.Println(response)
+	// fmt.Println(response)
 	defer resp.Body.Close()
 
 	return

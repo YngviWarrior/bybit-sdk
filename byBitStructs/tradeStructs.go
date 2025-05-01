@@ -22,3 +22,29 @@ type OrderArgument struct {
 	Category    string `json:"category"`
 	TimeInForce string `json:"timeInForce"`
 }
+
+/* -------- */
+
+type OrderResponse struct {
+	ReqID      string              `json:"reqId"`
+	RetCode    int                 `json:"retCode"`
+	RetMsg     string              `json:"retMsg"`
+	Op         string              `json:"op"`
+	Data       OrderResponseData   `json:"data"`
+	RetExtInfo map[string]any      `json:"retExtInfo"`
+	Header     OrderResponseHeader `json:"header"`
+	ConnID     string              `json:"connId"`
+}
+
+type OrderResponseData struct {
+	OrderID     string `json:"orderId"`
+	OrderLinkID string `json:"orderLinkId"`
+}
+
+type OrderResponseHeader struct {
+	LimitResetTimestamp string `json:"X-Bapi-Limit-Reset-Timestamp"`
+	TraceID             string `json:"Traceid"`
+	TimeNow             string `json:"Timenow"`
+	Limit               string `json:"X-Bapi-Limit"`
+	LimitStatus         string `json:"X-Bapi-Limit-Status"`
+}

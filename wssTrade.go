@@ -44,7 +44,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 	go func(w http.ResponseWriter, r *http.Request) {
 		for {
 			var response bybitstructs.WebSocketAuthResponse
-			var responseData bybitstructs.LiveExecResponse
+			var responseData bybitstructs.OrderResponse
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
 				log.Fatal("Erro to read message:", err)
