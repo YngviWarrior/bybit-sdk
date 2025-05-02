@@ -60,7 +60,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 				return
 			}
 
-			fmt.Printf("Message Received LEV5: %v\n", string(msg))
+			fmt.Printf("WSST: %v\n", string(msg))
 			if Subscribed {
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {

@@ -16,7 +16,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
+func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 	s.setUrl()
 	mqConn := rabbitmq.NewRabbitMQConnection()
 
@@ -59,19 +59,19 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 				return
 			}
 
-			fmt.Println("response", response)
+			fmt.Println("WSSO: ", string(msg))
 			if Subscribed {
 				if err = json.Unmarshal(msg, &responseData); err != nil {
 					log.Panic("LOV5 03")
 				}
-				fmt.Println("data", responseData)
+
 				if responseData.RetCode == 0 {
 					data, err := json.Marshal(responseData.Data)
 					if err != nil {
 						log.Panic("LOV5 03.1 ", err)
 					}
 
-					mqConn.Publish("", "", responseData.Topic, data)
+					mqConn.Publish("order", "direct", responseData.Topic, data)
 				} else {
 					log.Panic("LOV5 05: ", err)
 				}
@@ -96,14 +96,14 @@ func (s *bybit) LiveOrders(stopChan <-chan struct{}) {
 		log.Println("LOV5 02:", err)
 		return
 	}
-	fmt.Println("message", string(message))
+
 	// Enviar uma mensagem para o servidor WebSocket
 	err = conn.WriteMessage(websocket.TextMessage, message)
 	if err != nil {
 		log.Fatal("LOV5 03:", err)
 	}
 
-	subscription := fmt.Sprintf(`{"op":"subscribe","args":[%s]}`, ``)
+	subscription := fmt.Sprintf(`{"op":"subscribe","args":["%s"]}`, `order`)
 	fmt.Println(subscription)
 	// Enviar uma mensagem para o servidor WebSocket
 	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))

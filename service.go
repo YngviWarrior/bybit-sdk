@@ -14,7 +14,7 @@ const recvWindow = "10000"
 
 type BybitServiceInterface interface {
 	LivePublic(topic []string, stopChan <-chan struct{})
-	LiveOrders(stopChan <-chan struct{})
+	LiveOrder(stopChan <-chan struct{})
 	LiveExec(stopChan <-chan struct{})
 	LivePosition(stopChan <-chan struct{})
 	LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-chan struct{})

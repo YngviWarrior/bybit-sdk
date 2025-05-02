@@ -60,7 +60,7 @@ func (s *bybit) LivePosition(stopChan <-chan struct{}) {
 				return
 			}
 
-			fmt.Printf("Mensagem recebida LEV5: %v\n", string(msg))
+			fmt.Printf("WSSP: %v\n", string(msg))
 			if Subscribed {
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {

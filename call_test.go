@@ -57,9 +57,9 @@ func TestLivePublic(t *testing.T) {
 	stopChan <- struct{}{}
 }
 
-func TestLiveOrders(t *testing.T) {
+func TestLiveOrder(t *testing.T) {
 	stopChan := make(chan struct{})
-	go bybit.LiveOrders(stopChan)
+	go bybit.LiveOrder(stopChan)
 	time.Sleep(time.Second * 30)
 
 	bybit.CreateOrder(&bybitstructs.OrderParams{
@@ -79,6 +79,7 @@ func TestLiveExec(t *testing.T) {
 	stopChan := make(chan struct{})
 
 	go bybit.LiveExec(stopChan)
+	go bybit.LiveOrder(stopChan)
 	time.Sleep(time.Second * 30)
 
 	bybit.CreateOrder(&bybitstructs.OrderParams{

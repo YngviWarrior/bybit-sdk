@@ -37,15 +37,21 @@ func (r *rabbitmq) Publish(exchangeName string, exchangeType string, queueName s
 		false, // No Wait: false
 		nil,   // Arguments
 	)
-
 	if err != nil {
 		log.Fatal("RP 00: ", err)
+	}
+
+	if exchangeName == "" {
+		err = ch.QueueBind(queueName, "", exchangeName, false, nil)
+		if err != nil {
+			log.Fatal("RP 01: ", err)
+		}
 	}
 
 	err = ch.Publish(
 		exchangeName,
 		"",
-		false,
+		true, // Mandatory: true
 		false,
 		amqp091.Publishing{
 			ContentType: "text/plain",

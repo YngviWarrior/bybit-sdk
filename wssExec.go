@@ -59,7 +59,7 @@ func (s *bybit) LiveExec(stopChan <-chan struct{}) {
 				log.Println("Erro LEV5 00:", response.RetMsg)
 				return
 			}
-			fmt.Println("response: ", string(msg))
+			fmt.Println("WSSE: ", string(msg))
 			if Subscribed {
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {
@@ -72,7 +72,7 @@ func (s *bybit) LiveExec(stopChan <-chan struct{}) {
 						log.Panic("LEV5 01 ", err)
 					}
 
-					mqConn.Publish("", "", responseData.Topic, data)
+					mqConn.Publish("execution", "direct", responseData.Topic, data)
 				} else {
 					log.Panic("LEV5 05: ", err)
 				}
