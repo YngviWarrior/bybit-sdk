@@ -18,7 +18,7 @@ func (r *rabbitmq) Publish(exchangeName string, exchangeType string, queueName s
 		err = ch.ExchangeDeclare(
 			exchangeName, // Nome do Exchange
 			exchangeType, // Tipo Fanout
-			false,        // Não persistente
+			true,         // Não persistente
 			false,        // Não autodelete
 			false,
 			false,
