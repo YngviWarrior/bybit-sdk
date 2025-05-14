@@ -21,6 +21,52 @@ func NewRabbitMQConnection() RabbitMQInterface {
 		log.Fatal(err)
 	}
 
+	ch, err := conn.Channel()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer ch.Close()
+
+	err = ch.ExchangeDeclare(
+		"order",  // name
+		"direct", // type (ou "topic", "fanout", etc.)
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
+	)
+	if err != nil {
+		log.Fatalf("Failed to declare exchange: %v", err)
+	}
+
+	err = ch.ExchangeDeclare(
+		"execution", // name
+		"direct",    // type (ou "topic", "fanout", etc.)
+		true,        // durable
+		false,       // auto-deleted
+		false,       // internal
+		false,       // no-wait
+		nil,         // arguments
+	)
+	if err != nil {
+		log.Fatalf("Failed to declare exchange: %v", err)
+	}
+
+	err = ch.ExchangeDeclare(
+		"klines", // name
+		"fanout", // type (ou "topic", "fanout", etc.)
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
+	)
+	if err != nil {
+		log.Fatalf("Failed to declare exchange: %v", err)
+	}
+
 	return &rabbitmq{
 		Conn: conn,
 	}

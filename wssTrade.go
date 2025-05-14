@@ -56,7 +56,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 			}
 
 			if response.RetMsg != "" {
-				log.Println("Erro LEV5 00:", response.RetMsg)
+				log.Println("Erro LTV5 00:", response.RetMsg)
 				return
 			}
 
@@ -70,12 +70,12 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 				if responseData.RetCode == 0 {
 					data, err := json.Marshal(responseData.Data)
 					if err != nil {
-						log.Panic("LEV5 01 ", err)
+						log.Panic("LTV5 01 ", err)
 					}
 
 					mqConn.Publish("", "", responseData.Op, data)
 				} else {
-					log.Panic("LEV5 05: ", err)
+					log.Panic("LTV5 05: ", err)
 				}
 			}
 
