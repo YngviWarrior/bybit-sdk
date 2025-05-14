@@ -73,7 +73,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 						log.Panic("LTV5 01 ", err)
 					}
 
-					mqConn.Publish("", "", responseData.Op, data)
+					mqConn.Publish("livetrade", "direct", responseData.Op, data)
 				} else {
 					log.Panic("LTV5 05: ", err)
 				}

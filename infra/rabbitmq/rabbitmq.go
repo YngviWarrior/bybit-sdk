@@ -55,6 +55,19 @@ func NewRabbitMQConnection() RabbitMQInterface {
 	}
 
 	err = ch.ExchangeDeclare(
+		"livetrade", // name
+		"direct",    // type (ou "topic", "fanout", etc.)
+		true,        // durable
+		false,       // auto-deleted
+		false,       // internal
+		false,       // no-wait
+		nil,         // arguments
+	)
+	if err != nil {
+		log.Fatalf("Failed to declare exchange: %v", err)
+	}
+
+	err = ch.ExchangeDeclare(
 		"klines", // name
 		"fanout", // type (ou "topic", "fanout", etc.)
 		true,     // durable
