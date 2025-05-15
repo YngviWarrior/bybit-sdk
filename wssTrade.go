@@ -68,7 +68,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 				}
 
 				if responseData.RetCode == 0 {
-					data, err := json.Marshal(responseData.Data)
+					data, err := json.Marshal(responseData)
 					if err != nil {
 						log.Panic("LTV5 01 ", err)
 					}
@@ -84,10 +84,9 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 				if err != nil {
 					log.Println("Subscription Failed", err)
 				}
-
-				Subscribed = true
 			}
 
+			Subscribed = true
 			ConnID = response.ConnID
 			Authenticated = true
 		}
