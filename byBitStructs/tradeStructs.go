@@ -18,9 +18,10 @@ type OrderArgument struct {
 	Side        string `json:"side"`
 	OrderType   string `json:"orderType"`
 	Qty         string `json:"qty"`
-	Price       string `json:"price"`
+	Price       string `json:"price,omitempty"`
 	Category    string `json:"category"`
 	TimeInForce string `json:"timeInForce"`
+	OrderLinkId string `json:"orderLinkId"`
 }
 
 /* -------- */
