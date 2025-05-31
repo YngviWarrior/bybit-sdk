@@ -53,7 +53,7 @@ func TestLivePublic(t *testing.T) {
 	stopChan := make(chan struct{})
 	go bybit.LivePublic([]string{"kline.1.BTCUSDT", "kline.1.ETHUSDT"}, stopChan)
 
-	time.Sleep(time.Second * 20)
+	time.Sleep(time.Second * 200000)
 	stopChan <- struct{}{}
 }
 
@@ -71,7 +71,7 @@ func TestLiveOrder(t *testing.T) {
 		TimeInForce: "GTC",
 	})
 
-	time.Sleep(time.Second * 20)
+	time.Sleep(time.Second * 200000)
 	stopChan <- struct{}{}
 }
 
@@ -149,7 +149,7 @@ func TestLiveTrade(t *testing.T) {
 
 	orderChan <- order
 
-	time.Sleep(time.Second * 20)
+	time.Sleep(time.Second * 200000)
 	stopChan <- struct{}{}
 }
 

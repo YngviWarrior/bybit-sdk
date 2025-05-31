@@ -47,7 +47,7 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 			var responseData bybitstructs.LiveOrderData
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
-				log.Fatal("Erro ao ler mensagem:", err)
+				log.Fatal("LOV5:", err)
 			}
 
 			if err = json.Unmarshal(msg, &response); err != nil {
@@ -118,6 +118,7 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 	for {
 		select {
 		case <-ticker.C:
+			fmt.Sprintf("Enviando ping...")
 			err := conn.WriteMessage(websocket.PingMessage, []byte(`{
 				"success": true,
 				"ret_msg": "pong",

@@ -47,7 +47,7 @@ func (s *bybit) LivePosition(stopChan <-chan struct{}) {
 			var responseData bybitstructs.LiveExecResponse
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
-				log.Fatal("Erro ao ler mensagem:", err)
+				log.Fatal("LEV5:", err)
 			}
 
 			err = json.Unmarshal(msg, &response)

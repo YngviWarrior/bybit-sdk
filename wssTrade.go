@@ -110,6 +110,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 	for {
 		select {
 		case <-ticker.C:
+			fmt.Println("Enviando ping...")
 			err := conn.WriteMessage(websocket.PingMessage, []byte(`{
 				"success": true,
 				"ret_msg": "pong",
