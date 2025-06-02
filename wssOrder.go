@@ -59,7 +59,6 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 				return
 			}
 
-			fmt.Println("WSSO: ", string(msg))
 			if Subscribed {
 				if err = json.Unmarshal(msg, &responseData); err != nil {
 					log.Panic("LOV5 03")
@@ -104,7 +103,7 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 	}
 
 	subscription := fmt.Sprintf(`{"op":"subscribe","args":["%s"]}`, `order`)
-	fmt.Println(subscription)
+
 	// Enviar uma mensagem para o servidor WebSocket
 	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))
 	if err != nil {
@@ -118,7 +117,7 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 	for {
 		select {
 		case <-ticker.C:
-			fmt.Sprintf("Enviando ping...")
+			fmt.Println("Enviando ping LOV5...")
 			err := conn.WriteMessage(websocket.PingMessage, []byte(`{
 				"success": true,
 				"ret_msg": "pong",

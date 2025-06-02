@@ -63,7 +63,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 
 	fmt.Println("Conectado ao WebSocket:", BASE_URL_WSS+"/v5/public/spot")
 	subscription := fmt.Sprintf(`{"op":"subscribe","args":[%s]}`, topics)
-	fmt.Println(subscription)
+
 	// Enviar uma mensagem para o servidor WebSocket
 	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))
 	if err != nil {

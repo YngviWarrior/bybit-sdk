@@ -60,7 +60,6 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 				return
 			}
 
-			fmt.Printf("WSST: %v\n", string(msg))
 			if Subscribed {
 				err = json.Unmarshal(msg, &responseData)
 				if err != nil {
@@ -97,7 +96,6 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 		log.Println("Failed to marshal auth message:", err)
 		return
 	}
-	fmt.Println("auth msg: ", string(message))
 
 	err = conn.WriteMessage(websocket.TextMessage, message)
 	if err != nil {

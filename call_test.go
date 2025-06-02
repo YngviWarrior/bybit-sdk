@@ -60,7 +60,7 @@ func TestLivePublic(t *testing.T) {
 func TestLiveOrder(t *testing.T) {
 	stopChan := make(chan struct{})
 	go bybit.LiveOrder(stopChan)
-	time.Sleep(time.Second * 30)
+	time.Sleep(time.Second * 5)
 
 	bybit.CreateOrder(&bybitstructs.OrderParams{
 		Category:    "spot",
