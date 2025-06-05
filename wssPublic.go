@@ -42,7 +42,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 				log.Panic("LPV5 00")
 			}
 
-			// fmt.Println(responseSubscription)
+			fmt.Println(responseSubscription)
 			if Subscribed {
 				if err = json.Unmarshal(msg, &responseKline); err != nil {
 					log.Panic("LPV5 01")
@@ -63,7 +63,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 
 	fmt.Println("Conectado ao WebSocket:", BASE_URL_WSS+"/v5/public/spot")
 	subscription := fmt.Sprintf(`{"op":"subscribe","args":[%s]}`, topics)
-
+	fmt.Println("Enviando assinatura:", subscription)
 	// Enviar uma mensagem para o servidor WebSocket
 	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))
 	if err != nil {
