@@ -38,7 +38,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 		"args": []string{os.Getenv("BYBIT_API_KEY"), fmt.Sprint(expires), sign},
 	}
 
-	var ConnID string
+	// var ConnID string
 	var Authenticated bool
 	var Subscribed bool
 	go func(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +49,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 			if err != nil {
 				log.Fatal("Erro to read message:", err)
 			}
-
+			fmt.Println("Received message:", string(msg))
 			err = json.Unmarshal(msg, &response)
 			if err != nil {
 				log.Println("Erro to unmarshal message:", err)
@@ -86,7 +86,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 			}
 
 			Subscribed = true
-			ConnID = response.ConnID
+			// ConnID = response.ConnID
 			Authenticated = true
 		}
 	}(nil, nil)
@@ -108,10 +108,8 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 	for {
 		select {
 		case <-ticker.C:
+			fmt.Println("Enviando ping...")
 			err := conn.WriteMessage(websocket.PingMessage, []byte(`{
-				"success": true,
-				"ret_msg": "pong",
-				"conn_id": "`+ConnID+`",
 				"op": "ping"
 			}`))
 			if err != nil {

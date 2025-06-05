@@ -27,7 +27,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 	}
 	defer conn.Close()
 
-	var ConnID string
+	// var ConnID string
 	go func() {
 		var Subscribed bool
 		for {
@@ -47,7 +47,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 				if err = json.Unmarshal(msg, &responseKline); err != nil {
 					log.Panic("LPV5 01")
 				}
-				// fmt.Println(responseKline)
+				fmt.Println("Enviando dados para o RabbitMQ:", responseKline)
 				data, err := json.Marshal(responseKline)
 				if err != nil {
 					log.Panic("LPV5 02 ", err)
@@ -57,7 +57,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 			}
 
 			Subscribed = true
-			ConnID = responseSubscription.ConnID
+			// ConnID = responseSubscription.ConnID
 		}
 	}()
 
@@ -77,10 +77,8 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 	for {
 		select {
 		case <-ticker.C:
+			fmt.Println("Enviando ping...")
 			err := conn.WriteMessage(websocket.PingMessage, []byte(`{
-				"success": true,
-				"ret_msg": "pong",
-				"conn_id": "`+ConnID+`",
 				"op": "ping"
 			}`))
 			if err != nil {

@@ -38,7 +38,7 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 		"args": []string{os.Getenv("BYBIT_API_KEY"), fmt.Sprint(expires), sign},
 	}
 
-	var ConnID string
+	// var ConnID string
 	var Authenticated bool
 	var Subscribed bool
 	go func(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +85,7 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 				Subscribed = true
 			}
 
-			ConnID = response.ConnID
+			// ConnID = response.ConnID
 			Authenticated = true
 		}
 	}(nil, nil)
@@ -119,9 +119,6 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 		case <-ticker.C:
 			fmt.Println("Enviando ping LOV5...")
 			err := conn.WriteMessage(websocket.PingMessage, []byte(`{
-				"success": true,
-				"ret_msg": "pong",
-				"conn_id": "`+ConnID+`",
 				"op": "ping"
 			}`))
 			if err != nil {
