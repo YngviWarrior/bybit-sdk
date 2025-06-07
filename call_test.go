@@ -133,11 +133,11 @@ func TestLiveTrade(t *testing.T) {
 		Op: "order.create",
 		Args: []bybitstructs.OrderArgument{
 			{
-				Symbol:    "BTCUSDT",
-				Side:      "Buy",
-				OrderType: "Market",
-				Qty:       "500",
-				// Price:       "100.000",
+				Symbol:      "BTCUSDT",
+				Side:        "Buy",
+				OrderType:   "Limit",
+				Qty:         "0.00047",
+				Price:       "104075",
 				Category:    "spot",
 				TimeInForce: "GTC",
 			},
@@ -145,7 +145,7 @@ func TestLiveTrade(t *testing.T) {
 	}
 
 	go bybit.LiveTrade(orderChan, stopChan)
-	time.Sleep(time.Second * 30)
+	time.Sleep(time.Second * 5)
 
 	orderChan <- order
 

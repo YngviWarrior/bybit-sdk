@@ -42,12 +42,12 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 				log.Panic("LPV5 00")
 			}
 
-			fmt.Println(responseSubscription)
+			// fmt.Println(responseSubscription)
 			if Subscribed {
 				if err = json.Unmarshal(msg, &responseKline); err != nil {
 					log.Panic("LPV5 01")
 				}
-				fmt.Println("Enviando dados para o RabbitMQ:", responseKline)
+				// fmt.Println("Enviando dados para o RabbitMQ:", responseKline)
 				data, err := json.Marshal(responseKline)
 				if err != nil {
 					log.Panic("LPV5 02 ", err)
@@ -63,7 +63,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 
 	fmt.Println("Conectado ao WebSocket:", BASE_URL_WSS+"/v5/public/spot")
 	subscription := fmt.Sprintf(`{"op":"subscribe","args":[%s]}`, topics)
-	fmt.Println("Enviando assinatura:", subscription)
+	// fmt.Println("Enviando assinatura:", subscription)
 	// Enviar uma mensagem para o servidor WebSocket
 	err = conn.WriteMessage(websocket.TextMessage, []byte(subscription))
 	if err != nil {
@@ -77,7 +77,6 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 	for {
 		select {
 		case <-ticker.C:
-			fmt.Println("Enviando ping...")
 			err := conn.WriteMessage(websocket.PingMessage, []byte(`{
 				"op": "ping"
 			}`))
