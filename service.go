@@ -37,6 +37,9 @@ func (s *bybit) setUrl() {
 	case "testnet":
 		BASE_URL = "https://api-testnet.bybit.com"
 		BASE_URL_WSS = "wss://stream-testnet.bybit.com"
+	case "demo":
+		BASE_URL = "https://api-demo.bybit.com"
+		BASE_URL_WSS = "wss://stream-demo.bybit.com"
 	default:
 		BASE_URL = "https://api.bybit.com"
 		BASE_URL_WSS = "wss://stream.bybit.com"

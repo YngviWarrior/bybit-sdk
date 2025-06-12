@@ -49,7 +49,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 			if err != nil {
 				log.Fatal("Erro to read message:", err)
 			}
-			fmt.Println("Received message:", string(msg))
+			Log(string(msg))
 			err = json.Unmarshal(msg, &response)
 			if err != nil {
 				log.Println("Erro to unmarshal message:", err)

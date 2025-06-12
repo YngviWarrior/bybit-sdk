@@ -49,7 +49,7 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 			if err != nil {
 				log.Fatal("LOV5:", err)
 			}
-
+			Log(string(msg))
 			if err = json.Unmarshal(msg, &response); err != nil {
 				log.Panic("LOV5 00")
 			}
@@ -117,7 +117,6 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 	for {
 		select {
 		case <-ticker.C:
-			fmt.Println("Enviando ping LOV5...")
 			err := conn.WriteMessage(websocket.PingMessage, []byte(`{
 				"op": "ping"
 			}`))
