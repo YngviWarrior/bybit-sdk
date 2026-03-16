@@ -47,6 +47,7 @@ func (s *bybit) LiveTrade(order <-chan *bybitstructs.OrderRequest, stopChan <-ch
 			var responseData bybitstructs.OrderResponse
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
+				log.Printf("Erro to read message (trade): %#v\n", err)
 				log.Fatal("Erro to read message:", err)
 			}
 			// Log(string(msg))

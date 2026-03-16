@@ -35,6 +35,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 			var responseKline bybitstructs.SocketKlineResponse
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
+				log.Printf("LPV5 read error: %#v\n", err)
 				log.Fatal("LPV5:", err)
 			}
 			// Log(string(msg))
