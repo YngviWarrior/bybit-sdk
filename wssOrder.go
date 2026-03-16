@@ -49,7 +49,7 @@ func (s *bybit) LiveOrder(stopChan <-chan struct{}) {
 			if err != nil {
 				log.Fatal("LOV5:", err)
 			}
-			Log(string(msg))
+			// Log(string(msg))
 			if err = json.Unmarshal(msg, &response); err != nil {
 				log.Panic("LOV5 00")
 			}
