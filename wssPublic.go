@@ -37,7 +37,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 			if err != nil {
 				log.Fatal("LPV5:", err)
 			}
-			Log(string(msg))
+			// Log(string(msg))
 			if err = json.Unmarshal(msg, &responseSubscription); err != nil {
 				log.Panic("LPV5 00")
 			}
