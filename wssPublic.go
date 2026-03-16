@@ -48,7 +48,7 @@ func (s *bybit) LivePublic(topic []string, stopChan <-chan struct{}) {
 					log.Panic("LPV5 01")
 				}
 				// fmt.Println("Enviando dados para o RabbitMQ:", responseKline)
-				Log(fmt.Sprint("Enviando dados para o RabbitMQ:", responseKline))
+				// Log(fmt.Sprint("Enviando dados para o RabbitMQ:", responseKline))
 				data, err := json.Marshal(responseKline)
 				if err != nil {
 					log.Panic("LPV5 02 ", err)
